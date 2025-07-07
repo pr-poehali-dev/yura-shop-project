@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,366 +8,480 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import Icon from "@/components/ui/icon";
+import { useToast } from "@/hooks/use-toast";
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  rating: number;
+}
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 const Index = () => {
-  const products = [
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const { toast } = useToast();
+
+  const products: Product[] = [
     {
       id: 1,
-      name: "Круглая корзина с ручками",
-      price: "2 990 ₽",
-      image: "/img/2368ca82-1821-4962-8e91-7d23394f3091.jpg",
-      description: "Идеальна для хранения мелочей",
+      name: "Премиум наушники",
+      price: 12999,
+      description: "Высококачественные беспроводные наушники с шумоподавлением",
+      image: "/img/c16225a0-54b8-4d9a-bc53-1bd4aadc8729.jpg",
+      category: "electronics",
+      rating: 4.8,
     },
     {
       id: 2,
-      name: "Корзина для белья",
-      price: "4 500 ₽",
-      image: "/img/7df02aa9-0026-4109-88e7-f0f15d25f2b6.jpg",
-      description: "Высокая и вместительная",
+      name: "Смартфон Pro",
+      price: 79999,
+      description:
+        "Флагманский смартфон с отличной камерой и производительностью",
+      image: "/img/1960d73a-9ed8-4d4d-9efb-397201782098.jpg",
+      category: "electronics",
+      rating: 4.9,
     },
     {
       id: 3,
-      name: "Набор корзин",
-      price: "8 990 ₽",
-      image: "/img/56444d87-183d-40a9-bc19-2bfa8a4acc53.jpg",
-      description: "Комплект из 3 корзин разных размеров",
+      name: "Кожаная куртка",
+      price: 25999,
+      description: "Стильная кожаная куртка из натуральной кожи",
+      image: "/img/2115cad2-3b9e-4894-bff8-156b06c8f5c5.jpg",
+      category: "clothing",
+      rating: 4.7,
+    },
+    {
+      id: 4,
+      name: "Спортивные кроссовки",
+      price: 8999,
+      description: "Удобные кроссовки для бега и повседневной носки",
+      image: "/placeholder.svg",
+      category: "shoes",
+      rating: 4.6,
+    },
+    {
+      id: 5,
+      name: "Рюкзак для путешествий",
+      price: 4999,
+      description: "Вместительный рюкзак для поездок и походов",
+      image: "/placeholder.svg",
+      category: "accessories",
+      rating: 4.5,
+    },
+    {
+      id: 6,
+      name: "Умные часы",
+      price: 19999,
+      description: "Современные смарт-часы с мониторингом здоровья",
+      image: "/placeholder.svg",
+      category: "electronics",
+      rating: 4.4,
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      {/* Навигация */}
-      <nav className="bg-white border-b border-gray-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Icon name="ShoppingBasket" size={24} className="text-[#C9A96E]" />
-            <span className="text-xl font-bold text-black">Корзинки</span>
-          </div>
-          <div className="hidden md:flex space-x-8">
-            <a
-              href="#"
-              className="text-gray-700 hover:text-[#C9A96E] transition-colors"
-            >
-              Главная
-            </a>
-            <a
-              href="#about"
-              className="text-gray-700 hover:text-[#C9A96E] transition-colors"
-            >
-              О нас
-            </a>
-            <a
-              href="#products"
-              className="text-gray-700 hover:text-[#C9A96E] transition-colors"
-            >
-              Товары
-            </a>
-            <a
-              href="#delivery"
-              className="text-gray-700 hover:text-[#C9A96E] transition-colors"
-            >
-              Доставка
-            </a>
-            <a
-              href="#contacts"
-              className="text-gray-700 hover:text-[#C9A96E] transition-colors"
-            >
-              Контакты
-            </a>
-          </div>
-          <Button
-            variant="outline"
-            className="border-[#C9A96E] text-[#C9A96E] hover:bg-[#C9A96E] hover:text-white"
-          >
-            <Icon name="ShoppingCart" size={20} className="mr-2" />
-            Корзина
-          </Button>
-        </div>
-      </nav>
+  const categories = [
+    { id: "all", name: "Все товары" },
+    { id: "electronics", name: "Электроника" },
+    { id: "clothing", name: "Одежда" },
+    { id: "shoes", name: "Обувь" },
+    { id: "accessories", name: "Аксессуары" },
+  ];
 
-      {/* Героическая секция */}
-      <section className="py-20 px-6 bg-gradient-to-b from-white to-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-black mb-6 font-serif">
-            Плетёные корзинки
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Создаем уют в вашем доме с помощью качественных изделий ручной
-            работы
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Button size="lg" className="bg-black text-white hover:bg-gray-800">
-              <Icon name="ShoppingBag" size={20} className="mr-2" />
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const addToCart = (product: Product) => {
+    setCart((prev) => {
+      const existingItem = prev.find((item) => item.product.id === product.id);
+      if (existingItem) {
+        return prev.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      }
+      return [...prev, { product, quantity: 1 }];
+    });
+
+    toast({
+      title: "Товар добавлен в корзину",
+      description: `${product.name} добавлен в корзину`,
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prev) => prev.filter((item) => item.product.id !== productId));
+  };
+
+  const updateQuantity = (productId: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    setCart((prev) =>
+      prev.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item,
+      ),
+    );
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0,
+    );
+  };
+
+  const getCartItemsCount = () => {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("ru-RU", {
+      style: "currency",
+      currency: "RUB",
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Icon name="ShoppingBag" className="h-8 w-8 text-blue-600" />
+              <h1 className="text-2xl font-bold text-gray-900">TechShop</h1>
+            </div>
+
+            {/* Search */}
+            <div className="flex-1 max-w-lg mx-8">
+              <div className="relative">
+                <Icon
+                  name="Search"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                />
+                <Input
+                  placeholder="Поиск товаров..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Cart */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="relative">
+                  <Icon name="ShoppingCart" className="h-5 w-5 mr-2" />
+                  Корзина
+                  {getCartItemsCount() > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 flex items-center justify-center">
+                      {getCartItemsCount()}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Корзина ({getCartItemsCount()})</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-4">
+                  {cart.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">
+                      Корзина пуста
+                    </p>
+                  ) : (
+                    <>
+                      {cart.map((item) => (
+                        <div
+                          key={item.product.id}
+                          className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
+                        >
+                          <img
+                            src={item.product.image}
+                            alt={item.product.name}
+                            className="h-16 w-16 object-cover rounded-md"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-sm">
+                              {item.product.name}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {formatPrice(item.product.price)}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity - 1,
+                                )
+                              }
+                            >
+                              <Icon name="Minus" className="h-4 w-4" />
+                            </Button>
+                            <span className="w-8 text-center">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity + 1,
+                                )
+                              }
+                            >
+                              <Icon name="Plus" className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <Separator />
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center font-semibold text-lg">
+                          <span>Итого:</span>
+                          <span>{formatPrice(getTotalPrice())}</span>
+                        </div>
+                        <Button className="w-full" size="lg">
+                          <Icon name="CreditCard" className="h-5 w-5 mr-2" />
+                          Оформить заказ
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-8 mb-8">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl font-bold mb-4">
+              Добро пожаловать в TechShop
+            </h2>
+            <p className="text-xl mb-6">
+              Лучшие товары по выгодным ценам с быстрой доставкой
+            </p>
+            <Button size="lg" variant="secondary">
+              <Icon name="ArrowRight" className="h-5 w-5 mr-2" />
               Смотреть каталог
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-[#C9A96E] text-[#C9A96E] hover:bg-[#C9A96E] hover:text-white"
-            >
-              О нас
-            </Button>
           </div>
         </div>
-      </section>
 
-      {/* Товары */}
-      <section id="products" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-black mb-4 font-serif">
-              Популярные товары
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Выбирайте из нашей коллекции качественных корзинок
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <Card
-                key={product.id}
-                className="group hover:shadow-lg transition-shadow duration-300 bg-white"
+        {/* Categories */}
+        <div className="mb-8">
+          <h3 className="text-2xl font-bold mb-4">Категории</h3>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={
+                  selectedCategory === category.id ? "default" : "outline"
+                }
+                onClick={() => setSelectedCategory(category.id)}
               >
-                <div className="aspect-square overflow-hidden rounded-t-lg">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl text-black">
-                    {product.name}
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                    {product.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-[#C9A96E]">
-                      {product.price}
-                    </span>
-                    <Button className="bg-black text-white hover:bg-gray-800">
-                      В корзину
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                {category.name}
+              </Button>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* О нас */}
-      <section id="about" className="py-20 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => (
+            <Card
+              key={product.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="aspect-square bg-gray-100 relative">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 right-2">
+                  <Badge className="bg-yellow-500 text-white">
+                    <Icon name="Star" className="h-3 w-3 mr-1" />
+                    {product.rating}
+                  </Badge>
+                </div>
+              </div>
+              <CardHeader>
+                <CardTitle className="text-lg">{product.name}</CardTitle>
+                <CardDescription>{product.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-600">
+                    {formatPrice(product.price)}
+                  </span>
+                  <Button onClick={() => addToCart(product)}>
+                    <Icon name="ShoppingCart" className="h-4 w-4 mr-2" />В
+                    корзину
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-12">
+            <Icon
+              name="Search"
+              className="h-16 w-16 text-gray-400 mx-auto mb-4"
+            />
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              Товары не найдены
+            </h3>
+            <p className="text-gray-500">Попробуйте изменить критерии поиска</p>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white mt-16">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h2 className="text-4xl font-bold text-black mb-6 font-serif">
-                О нас
-              </h2>
-              <p className="text-gray-600 text-lg mb-6">
-                Мы создаём плетёные корзинки ручной работы уже более 15 лет.
-                Каждое изделие изготавливается с любовью и вниманием к деталям
-                из экологически чистых материалов.
+              <div className="flex items-center space-x-2 mb-4">
+                <Icon name="ShoppingBag" className="h-6 w-6" />
+                <h3 className="text-xl font-bold">TechShop</h3>
+              </div>
+              <p className="text-gray-400">
+                Ваш надежный партнер в мире технологий
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Icon name="Check" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">
-                    100% натуральные материалы
-                  </span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Icon name="Check" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">Ручная работа мастеров</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Icon name="Check" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">
-                    Долговечность и качество
-                  </span>
-                </div>
-              </div>
             </div>
-            <div className="relative">
-              <img
-                src="/img/56444d87-183d-40a9-bc19-2bfa8a4acc53.jpg"
-                alt="Наши корзинки"
-                className="rounded-lg shadow-lg"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-[#C9A96E] text-white p-6 rounded-lg">
-                <div className="text-center">
-                  <div className="text-3xl font-bold">15+</div>
-                  <div className="text-sm">лет опыта</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Доставка и оплата */}
-      <section id="delivery" className="py-20 px-6 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-black mb-16 text-center font-serif">
-            Доставка и оплата
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
-                <Icon
-                  name="Truck"
-                  size={40}
-                  className="text-[#C9A96E] mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-black mb-2">
-                  Быстрая доставка
-                </h3>
-                <p className="text-gray-600">
-                  По Москве — 1-2 дня, по России — 3-7 дней
-                </p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
-                <Icon
-                  name="CreditCard"
-                  size={40}
-                  className="text-[#C9A96E] mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-black mb-2">
-                  Удобная оплата
-                </h3>
-                <p className="text-gray-600">Карта, наличные, переводом</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
-                <Icon
-                  name="Shield"
-                  size={40}
-                  className="text-[#C9A96E] mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-black mb-2">
-                  Гарантия качества
-                </h3>
-                <p className="text-gray-600">Возврат в течение 14 дней</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
-                <Icon
-                  name="Package"
-                  size={40}
-                  className="text-[#C9A96E] mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-black mb-2">Упаковка</h3>
-                <p className="text-gray-600">Бережная упаковка для доставки</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Контакты */}
-      <section id="contacts" className="py-20 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-black mb-16 text-center font-serif">
-            Контакты
-          </h2>
-          <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h3 className="text-2xl font-bold text-black mb-6">
-                Свяжитесь с нами
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Icon name="Phone" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">+7 (495) 123-45-67</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Icon name="Mail" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">info@korzinki.ru</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Icon name="MapPin" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">
-                    г. Москва, ул. Мастеров, д. 15
-                  </span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Icon name="Clock" size={20} className="text-[#C9A96E]" />
-                  <span className="text-gray-700">
-                    Пн-Пт: 9:00-18:00, Сб-Вс: 10:00-16:00
-                  </span>
-                </div>
-              </div>
+              <h4 className="font-semibold mb-4">Покупателям</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Доставка
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Оплата
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Возврат
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Гарантия
+                  </a>
+                </li>
+              </ul>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold text-black mb-6">
-                Напишите нам
-              </h3>
-              <form className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Ваше имя"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A96E]"
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A96E]"
-                />
-                <textarea
-                  placeholder="Ваше сообщение"
-                  rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A96E]"
-                ></textarea>
-                <Button className="w-full bg-black text-white hover:bg-gray-800">
-                  Отправить сообщение
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Подвал */}
-      <footer className="bg-black text-white py-12 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-6">
-            <Icon name="ShoppingBasket" size={24} className="text-[#C9A96E]" />
-            <span className="text-xl font-bold">Корзинки</span>
+            <div>
+              <h4 className="font-semibold mb-4">Компания</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-white">
+                    О нас
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Контакты
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Вакансии
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Новости
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Связь</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li className="flex items-center space-x-2">
+                  <Icon name="Phone" className="h-4 w-4" />
+                  <span>+7 (999) 123-45-67</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Icon name="Mail" className="h-4 w-4" />
+                  <span>info@techshop.ru</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Icon name="MapPin" className="h-4 w-4" />
+                  <span>Москва, ул. Примерная, 123</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <p className="text-gray-400 mb-6">
-            Создаем уют в вашем доме с 2009 года
-          </p>
-          <div className="flex justify-center space-x-6">
-            <a
-              href="#"
-              className="text-gray-400 hover:text-[#C9A96E] transition-colors"
-            >
-              <Icon name="Instagram" size={24} />
-            </a>
-            <a
-              href="#"
-              className="text-gray-400 hover:text-[#C9A96E] transition-colors"
-            >
-              <Icon name="Facebook" size={24} />
-            </a>
-            <a
-              href="#"
-              className="text-gray-400 hover:text-[#C9A96E] transition-colors"
-            >
-              <Icon name="Twitter" size={24} />
-            </a>
-          </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2024 Корзинки. Все права защищены.</p>
+
+          <Separator className="my-8 bg-gray-800" />
+
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © 2024 TechShop. Все права защищены.
+            </p>
+            <div className="flex space-x-4 mt-4 md:mt-0">
+              <Button variant="ghost" size="sm">
+                <Icon name="Facebook" className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Icon name="Twitter" className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Icon name="Instagram" className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </footer>
